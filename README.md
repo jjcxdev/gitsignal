@@ -1,6 +1,6 @@
 # Git Signal - Neovim Plugin
 
-![Git Signal](https://github.com/jjcxdev/gitsignal/raw/main/assets/screenshot.png)
+![Git Signal](https://github.com/jjcxdev/gitsignal/blob/main/screenshot.png)
 
 **Git Signal** is a lightweight Neovim plugin designed to help you avoid committing unsaved files. It provides a visual signal in a floating window that lists all unsaved files in your current workspace, ensuring that you don't accidentally leave any changes uncommitted.
 
