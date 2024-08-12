@@ -44,10 +44,10 @@ M.get_changed_files = function()
 
     -- Get unsaved files from Neovim
     local unsaved_files = {}
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
         local is_modified = vim.api.nvim_buf_get_option(buf, "modified")
         local filename = vim.api.nvim_buf_get_name(buf)
-        print("Buffer:", buf "filename:", "Modified:", is_modified)
+        print("Buffer ID:", buf_id "filename:", "Modified:", is_modified)
 
         if is_modified then
             table.insert(unsaved_files, filename)
