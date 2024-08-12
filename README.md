@@ -1,6 +1,6 @@
 <div align="center">
 
-# Git Signal
+# GitSignal
 ##### Never Commit Unsaved.
 
 [![Lua](https://img.shields.io/badge/Lua-blue.svg?style=for-the-badge&logo=lua)](http://www.lua.org)
@@ -27,7 +27,7 @@ Committing unsaved files is a common issue that can lead to incomplete commits, 
 
 ## ⇁ The Solutions
 
-Git Signal addresses this problem by providing a clear, visual indication of all unsaved files in the current Neovim session. By listing these files in a floating window, Git Signal helps you ensure that all changes are saved before committing, reducing the likelihood of incomplete commits and improving overall code quality.
+GitSignal addresses this problem by providing a clear, visual indication of all unsaved files in the current Neovim session. By listing these files in a floating window, GitSignal helps you ensure that all changes are saved before committing, reducing the likelihood of incomplete commits and improving overall code quality.
 
 ## ⇁ Installation
 
@@ -51,7 +51,7 @@ use "jjcxdev/gitsignal"
 ```
 ## ⇁ Getting Started
 
-No additional configuration is required. Once installed, Git Signal will automatically display a floating window with unsaved files when Neovim starts.
+No additional configuration is required. Once installed, GitSignal will automatically display a floating window with unsaved files when Neovim starts.
 
 However, if you'd like to customize the behavior, you can manually call the plugin's functions:
 
@@ -68,7 +68,7 @@ However, if you'd like to customize the behavior, you can manually call the plug
 
 ### Config
 
-Currently, Git Signal doesn't require any additional configuration. It works out of the box, but you can customize its appearance.
+Currently, GitSignal doesn't require any additional configuration. It works out of the box, but you can customize its appearance.
 
 ### Settings
 
