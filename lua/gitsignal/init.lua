@@ -37,11 +37,11 @@ M.get_changed_files = function()
     -- Process git status output
     for line in string.gmatch(result, "[^\r\n]+") do
         local status = line:sub(1, 2):gsub("%s", "")
-        local file_path = line:match("^%s*[MADU?]+%s+(.+)$")
+        local file_path = line:match("^%s*[MADRCU?]+%s+(.+)$")
 
         if file_path then
             -- Track new and modified files only
-            if status == "M" or status == "??" then
+            if status == "M" or status == "??" or status == "A" then
                 table.insert(all_files, file_path)
             end
         end
@@ -57,11 +57,17 @@ M.get_changed_files = function()
             -- Add unsaved files to the list
             if is_modified then
                 table.insert(unsaved_files, filename)
+                -- Insert an asterisk (*) in front of the filename to mark it as unsaved
+                for i, file in ipairs(all_files) do
+                    if file == filename then
+                        all_files[i] = "* " .. file
+                    end
+                end
             end
         end
     end
 
-    -- Return both the list of files and the unsaved files
+    -- Combine and return both lists
     return all_files, unsaved_files
 end
 
@@ -108,12 +114,10 @@ M.show_changed_files = function()
     -- Set the buffer content with the truncated file paths
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, truncated_files)
 
-    -- Highlight unsaved files in red
+    -- Highlight unsaved files in red and add markers
     for i, file in ipairs(truncated_files) do
-        for _, unsaved in ipairs(unsaved_files) do
-            if file:find(unsaved, 1, true) then
-                vim.api.nvim_buf_add_highlight(buf, -1, "GitSignalUnsaved", i - 1, 0, -1)
-            end
+        if file:find("^* ") then
+            vim.api.nvim_buf_add_highlight(buf, -1, "GitSignalUnsaved", i - 1, 0, -1)
         end
     end
 
