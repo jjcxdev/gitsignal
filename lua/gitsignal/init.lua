@@ -110,3 +110,5 @@ M.show_changed_files = function()
     -- Optional: make the window closeable with `q`
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
 end
+
+return M
