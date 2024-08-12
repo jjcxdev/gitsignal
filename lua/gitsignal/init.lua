@@ -1,5 +1,27 @@
 local M = {}
 
+-- Function to truncate filepath in response
+local function truncate_path(full_path)
+    -- Get the directory and filename
+    local dir, filename = full_path:match("(.*/)(.*)")
+    -- Return the last directory and the filename
+    if dir then
+        local last_dir = dir:match(".*/(.*)/")
+        return (last_dir or "") .. "/" .. filename
+    else
+        return full_path -- fallback if pattern doesn't match
+    end
+end
+
+-- Function to apply truncation to all file paths in the list
+local function truncate_paths(files)
+    local truncated_files = {}
+    for _, file in ipairs(files) do
+        table.insert(truncated_files, truncate_path(files))
+    end
+    return truncated_files
+end
+
 -- Function to get changed files since the last commit
 M.get_changed_files = function()
 
@@ -23,12 +45,17 @@ M.get_changed_files = function()
         if vim.api.nvim_buf_get_option(buf, "modified") then
             local filename = vim.api.nvim_buf_get_name(buf)
             table.insert(unsaved_files, filename)
+            -- Debugging
+            print("Unsaved file detected:", filename)
     end
 end
 
     -- Combine and return both lists
     local all_files = vim.tbl_extend("force", git_files, unsaved_files)
-    return all_files
+
+    --Truncate the paths
+    local truncated_files = truncate_paths(all_files)
+    return truncated_files
 end
 
 -- Function to display changed files in a small window
@@ -62,7 +89,7 @@ M.show_changed_files = function()
     })
 
     -- Apply terminal color scheme
-    vim.api.nvim_win_set_option(win, "winhighlight", "Normal:Normal,FloatBorder:FloatBorder")
+    vim.api.nvim_win_set_option(win, "winhighlight", "NormalFloat:Normal,FloatBorder:FloatBorder")
 
     -- Set the buffer content
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, files)
@@ -71,4 +98,4 @@ M.show_changed_files = function()
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
 end
 
-return M
+return Md
