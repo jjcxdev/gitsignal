@@ -27,7 +27,6 @@ end
 
 -- Function to get changed files since the last commit
 M.get_changed_files = function()
-
     -- Get changed files from git
     local handle = io.popen("git diff --name-only HEAD")
     if not handle then return {} end
@@ -46,15 +45,16 @@ M.get_changed_files = function()
     local unsaved_files = {}
     for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
         local filename = vim.api.nvim_buf_get_name(buf_id)
-
-        -- Ensure the buffer has a valid name
-        if filename ~= "" then
+        
+        -- Ensure the buffer has a valid name (i.e., it's associated with a file)
+        if filename and filename ~= "" then
             local is_modified = vim.api.nvim_buf_get_option(buf_id, "modified")
-            print("Buffer ID:", buf_id "filename:", "Modified:", is_modified)
-
+            -- Debugging: Print buffer information
+            print("Buffer ID:", buf_id, "Filename:", filename, "Modified:", is_modified)
+            
             if is_modified then
                 table.insert(unsaved_files, filename)
-                print("Unsaved file detected:", filename)
+                print("Unsaved file detected: ", filename)
             end
         end
     end
@@ -62,10 +62,10 @@ M.get_changed_files = function()
     -- Combine and return both lists
     local all_files = vim.tbl_extend("force", git_files, unsaved_files)
 
-    --Truncate the paths
+    -- Truncate the paths to show only immediate directory and filename
     local truncated_files = truncate_paths(all_files)
     
-    return truncated_files
+    return truncated_files  -- Return the truncated file paths
 end
 
 -- Function to display changed files in a small window
