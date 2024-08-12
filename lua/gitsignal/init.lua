@@ -98,4 +98,4 @@ M.show_changed_files = function()
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
 end
 
-return Md
+return M
