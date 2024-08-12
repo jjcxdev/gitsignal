@@ -1,16 +1,20 @@
 local M = {}
-
+-- Test
 -- Function to truncate filepath in response
 local function truncate_path(full_path)
+    
+    -- Ensure that full_path is not nil
+    if not full_path then return "" end
+
     -- Get the directory and filename
     local dir, filename = full_path:match("(.*/)(.*)")
+    
+    -- If dir is nil, just return the full path
+    if not dir then return full_path end
+
     -- Return the last directory and the filename
-    if dir then
-        local last_dir = dir:match(".*/(.*)/")
-        return (last_dir or "") .. "/" .. filename
-    else
-        return full_path -- fallback if pattern doesn't match
-    end
+    local last_dir = dir:match(".*/(.*)/")
+    return (last_dir or "") .. "/" .. filename
 end
 
 -- Function to apply truncation to all file paths in the list
