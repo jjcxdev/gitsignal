@@ -77,13 +77,16 @@ M.show_changed_files = function()
         return
     end
 
-    -- Get the editor' width and height
+    -- Ensure files are printed out for debugging
+    print("Files to display:", vim.inspect(files))
+
+    -- Get the editor's width and height
     local width = vim.api.nvim_get_option("columns")
     local height = vim.api.nvim_get_option("lines")
 
-    -- Calcualte window size and position
+    -- Calculate window size based on content
     local win_width = 40
-    local win_height = #files + 2
+    local win_height = math.min(#files + 2, height - 4) -- limit height to avoid oversize
     local row = height - win_height - 2
     local col = width - win_width - 2
 
@@ -98,14 +101,12 @@ M.show_changed_files = function()
         border = 'single'
     })
 
-    -- Apply terminal color scheme
+    -- Apply terminal color scheme to avoid black spacing
     vim.api.nvim_win_set_option(win, "winhighlight", "NormalFloat:Normal,FloatBorder:FloatBorder")
 
-    -- Set the buffer content
+    -- Set the buffer content with the truncated file paths
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, files)
 
     -- Optional: make the window closeable with `q`
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
 end
-
-return M
