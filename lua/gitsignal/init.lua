@@ -28,6 +28,11 @@ end
 
 -- Function to display unsaved files in a small window
 M.show_unsaved_files = function()
+    -- Close the existing window if it exists
+    if M.win and vim.api.nvim_win_is_valid(M.win) then
+        vim.api.nvim_win_close(M.win, true)
+    end
+
     local unsaved_files = M.get_unsaved_files()
 
     -- Centered title for the floating window
@@ -41,7 +46,7 @@ M.show_unsaved_files = function()
     local width = vim.api.nvim_get_option("columns")
     local height = vim.api.nvim_get_option("lines")
     local win_width = 40
-    local win_height = math.max(#truncated_files + 1,1) -- minimum height of 2 (title + 1 empty lines)
+    local win_height = math.max(#truncated_files + 1, 1) -- minimum height of 2 (title + 1 empty lines)
     local row = height - win_height - 4 -- slightly above lualine
     local col = width - win_width - 2
 
@@ -52,7 +57,7 @@ M.show_unsaved_files = function()
 
     -- Create a new floating window
     local buf = vim.api.nvim_create_buf(false, true)
-    local win = vim.api.nvim_open_win(buf, true, {
+    M.win = vim.api.nvim_open_win(buf, true, {
         relative = 'editor',
         width = win_width,
         height = win_height,
@@ -63,7 +68,7 @@ M.show_unsaved_files = function()
         title_pos = 'center'
     })
 
-    vim.api.nvim_win_set_option(win, "winhighlight", "NormalFloat:GitSignalNormalFloat,FloatBorder:GitSignalFloatBorder")
+    vim.api.nvim_win_set_option(M.win, "winhighlight", "NormalFloat:GitSignalNormalFloat,FloatBorder:GitSignalFloatBorder")
 
     if vim.tbl_isempty(truncated_files) then
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "No unsaved files" })
@@ -82,15 +87,15 @@ M.show_unsaved_files = function()
     -- Move the cursor back to the main buffer
     vim.cmd('wincmd p')
 
-    -- Store the buffer and window ID for later reference
+    -- Store the buffer ID for later reference
     M.buf = buf
-    M.win = win
 end
 
 -- Function to close the floating window
 M.close_git_signal = function()
     if M.win and vim.api.nvim_win_is_valid(M.win) then
         vim.api.nvim_win_close(M.win, true)
+        M.win = nil -- Clear the window ID
     end
 end
 
