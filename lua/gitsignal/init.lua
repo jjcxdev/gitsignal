@@ -1,7 +1,8 @@
 local M = {}
+--Test
 M.get_changed_files = function()
     -- Get changed files from git
-    local handle = io.popen("git diff --name-only HEAD")
+    local handle = io.popen("git --porcelain")
     if not handle then return {} end
     local result = handle:read("*a")
     handle:close()
