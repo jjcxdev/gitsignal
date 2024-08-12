@@ -71,5 +71,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Credits
 
-- Created by [Justin Chambers](https://github.com/jjcxdev).
+- Created by [jjcx](https://github.com/jjcxdev).
 - Inspired by the need to prevent accidental commits with unsaved files.
