@@ -92,13 +92,14 @@ M.close_git_signal = function()
 end
 
 -- Register the commands globally
+vim.cmd('delcommand Gitsignal')  -- Ensure no old command exists
 vim.api.nvim_create_user_command('Gitsignal', M.show_unsaved_files, {})
 vim.api.nvim_create_user_command('CloseGitsignal', M.close_git_signal, {})
 
 -- Automatically show the floating window when Neovim starts
 vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
-        M.show_unsaved_files()
+        require('gitsignal').show_unsaved_files()
     end,
 })
 
