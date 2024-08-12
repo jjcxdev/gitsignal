@@ -36,7 +36,7 @@ M.show_unsaved_files = function()
     local unsaved_files = M.get_unsaved_files()
 
     -- Centered title for the floating window
-    local title = " Git Signal "
+    local title = " GitSignal "
     local truncated_files = {}
     for _, file in ipairs(unsaved_files) do
         table.insert(truncated_files, truncate_path(file))
