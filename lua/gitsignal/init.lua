@@ -58,7 +58,7 @@ M.show_unsaved_files = function()
         height = win_height,
         row = row,
         col = col,
-        border = { "╭", "─", "╮", "┃", "╯", "─", "╰", "┃" }, -- solid borders
+        border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }, -- solid borders
         title = title,
         title_pos = 'center'
     })
