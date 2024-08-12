@@ -76,8 +76,30 @@ M.show_unsaved_files = function()
         end
     end
 
-    -- Optional: make the window closeable with `q`
-    vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
+    -- Make the window closeable with a command
+    vim.api.nvim_buf_set_keymap(buf, 'n', '<Esc>', ':close<CR>', { noremap = true, silent = true })
+
+    -- Store the buffer and window ID for later reference
+    M.buf = buf
+    M.win = win
 end
+
+-- Function to close the floating window
+M.close_git_signal = function()
+    if M.win and vim.api.nvim_win_is_valid(M.win) then
+        vim.api.nvim_win_close(M.win, true)
+    end
+end
+
+-- Register the commands globally
+vim.api.nvim_create_user_command('Gitsignal', M.show_unsaved_files, {})
+vim.api.nvim_create_user_command('CloseGitsignal', M.close_git_signal, {})
+
+-- Automatically show the floating window when Neovim starts
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        M.show_unsaved_files()
+    end,
+})
 
 return M
