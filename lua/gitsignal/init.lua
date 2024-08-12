@@ -91,10 +91,7 @@ M.close_git_signal = function()
     end
 end
 
--- Unregister the old command (if exists)
-vim.cmd('delcommand Gitsignal')
-
--- Register the commands globally
+-- Register the commands globally within the plugin
 vim.api.nvim_create_user_command('Gitsignal', M.show_unsaved_files, {})
 vim.api.nvim_create_user_command('CloseGitsignal', M.close_git_signal, {})
 
