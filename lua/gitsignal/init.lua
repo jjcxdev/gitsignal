@@ -34,15 +34,21 @@ M.get_changed_files = function()
     local all_files = {}
     local unsaved_files = {}
 
+    -- Debugging: Print the raw Git output
+    print("Git Status Output:\n" .. result)
+
     -- Process git status output
     for line in string.gmatch(result, "[^\r\n]+") do
+        print("Processing Line: " .. line)
         local status = line:sub(1, 2):gsub("%s", "")
         local file_path = line:match("^%s*[MADRCU?]+%s+(.+)$")
 
         if file_path then
+            print("Detected File: " .. file_path .. " with Status: " .. status)
             -- Track new and modified files only
             if status == "M" or status == "??" or status == "A" then
                 table.insert(all_files, file_path)
+                print("Added File: " .. file_path)
             end
         end
     end
@@ -53,6 +59,7 @@ M.get_changed_files = function()
 
         if filename and filename ~= "" then
             local is_modified = vim.api.nvim_buf_get_option(buf_id, "modified")
+            print("Buffer ID: " .. buf_id .. " | Filename: " .. filename .. " | Modified: " .. tostring(is_modified))
 
             -- Add unsaved files to the list
             if is_modified then
@@ -61,6 +68,7 @@ M.get_changed_files = function()
                 for i, file in ipairs(all_files) do
                     if file == filename then
                         all_files[i] = "* " .. file
+                        print("Marked Unsaved File: " .. file)
                     end
                 end
             end
@@ -81,6 +89,9 @@ M.show_changed_files = function()
     end
 
     local truncated_files = truncate_paths(files)
+
+    -- Debugging: Print the final list of files
+    print("Files to Display:\n" .. vim.inspect(truncated_files))
 
     -- Get the editor's width and height
     local width = vim.api.nvim_get_option("columns")
@@ -118,6 +129,7 @@ M.show_changed_files = function()
     for i, file in ipairs(truncated_files) do
         if file:find("^* ") then
             vim.api.nvim_buf_add_highlight(buf, -1, "GitSignalUnsaved", i - 1, 0, -1)
+            print("Highlighted Unsaved File: " .. file)
         end
     end
 
