@@ -1,5 +1,29 @@
 local M = {}
 
+local function truncate_path(full_path)
+    -- Ensure that full_path is a string
+    if type(full_path) ~= "string" then return "" end
+
+    -- Get the directory and filename
+    local dir, filename = full_path:match("(.*/)(.*)")
+    
+    -- If dir is nil, just return the full path
+    if not dir then return full_path end
+    
+    -- Return the last directory and the filename
+    local last_dir = dir:match(".*/(.*)/")
+    return (last_dir or "") .. "/" .. filename
+end
+
+-- Apply truncation before displaying
+local function truncate_paths(files)
+    local truncated_files = {}
+    for _, file in ipairs(files) do
+        table.insert(truncated_files, truncate_path(file))
+    end
+    return truncated_files
+end
+
 -- Function to get changed files since the last commit
 M.get_changed_files = function()
     -- Get all modified, deleted, and untracked files
@@ -55,8 +79,8 @@ M.show_changed_files = function()
         return
     end
 
-    -- Ensure files are printed out for debugging
-    print("Files to display:", vim.inspect(files))
+    -- Truncate file paths before displaying
+    local truncated_files = truncate_paths(files)
 
     -- Get the editor's width and height
     local width = vim.api.nvim_get_option("columns")
@@ -64,7 +88,7 @@ M.show_changed_files = function()
 
     -- Calculate window size based on content
     local win_width = 40
-    local win_height = math.min(#files + 2, height - 4) -- limit height to avoid oversize
+    local win_height = math.min(#truncated_files + 2, height - 4) -- limit height to avoid oversize
     local row = height - win_height - 2
     local col = width - win_width - 2
 
@@ -82,10 +106,10 @@ M.show_changed_files = function()
     -- Apply terminal color scheme to avoid black spacing
     vim.api.nvim_win_set_option(win, "winhighlight", "NormalFloat:Normal,FloatBorder:FloatBorder")
 
-    -- Set the buffer content with the full file paths
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, files)
+    -- Set the buffer content with the truncated file paths
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, truncated_files)
 
-    -- Optional: make the window closeable with `q`
+    -- Optional: make the window closeable with q
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
 end
 
