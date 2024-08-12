@@ -19,7 +19,7 @@ Add the following to your Lazy.nvim plugin list:
 
 ```lua
 return {
-    "jjcxdev/gitsignal.nvim",
+    "jjcxdev/gitsignal",
 }
 ```
 
@@ -28,7 +28,7 @@ return {
 Add the following to your `packer.nvim` configuration:
 
 ``` lua
-use "jjcxdev/gitsignal.nvim"
+use "jjcxdev/gitsignal"
 
 ```
 ## Configuration
