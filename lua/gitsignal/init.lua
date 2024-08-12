@@ -7,6 +7,9 @@ M.get_changed_files = function()
     local result = handle:read("*a")
     handle:close()
 
+    -- Debugging: Print the raw result
+    print("Git Command Output: ", result)
+
     local files = {}
     for file in string.gmatch(result, "[^\r\n]+") do
         table.insert(files, file)
