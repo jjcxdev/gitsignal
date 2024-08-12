@@ -41,7 +41,7 @@ M.show_unsaved_files = function()
     local width = vim.api.nvim_get_option("columns")
     local height = vim.api.nvim_get_option("lines")
     local win_width = 40
-    local win_height = math.max(#truncated_files + 1, 2) -- minimum height of 3 (title + 2 empty lines)
+    local win_height = math.max(#truncated_files + 1,1) -- minimum height of 2 (title + 1 empty lines)
     local row = height - win_height - 4 -- slightly above lualine
     local col = width - win_width - 2
 
