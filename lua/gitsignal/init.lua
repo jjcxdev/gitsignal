@@ -1,8 +1,9 @@
 local M = {}
---Test
+
+-- Function to get changed files since the last commit
 M.get_changed_files = function()
-    -- Get changed files from git
-    local handle = io.popen("git --porcelain")
+    -- Get all modified, deleted, and untracked files
+    local handle = io.popen("git status --porcelain")
     if not handle then return {} end
     local result = handle:read("*a")
     handle:close()
@@ -10,9 +11,14 @@ M.get_changed_files = function()
     -- Debugging: Print the raw result
     print("Git Command Output: ", result)
 
-    local git_files = {}
-    for file in string.gmatch(result, "[^\r\n]+") do
-        table.insert(git_files, file)
+    local all_files = {}
+    for line in string.gmatch(result, "[^\r\n]+") do
+        -- Extract the file path from the git status output
+        local file_path = line:match("^[ %?MADRCU]+(.+)$")
+        if file_path then
+            table.insert(all_files, file_path)
+            print("Detected file change: ", file_path)
+        end
     end
 
     -- Get unsaved files from Neovim
@@ -34,7 +40,7 @@ M.get_changed_files = function()
     end
 
     -- Combine and return both lists
-    local all_files = vim.tbl_extend("force", git_files, unsaved_files)
+    all_files = vim.tbl_extend("force", all_files, unsaved_files)
     
     -- Directly return the full file paths
     return all_files
