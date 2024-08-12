@@ -33,11 +33,26 @@ M.get_changed_files = function()
     handle:close()
 
     local all_files = {}
+    local status_markers = {}
+    
     for line in string.gmatch(result, "[^\r\n]+") do
-        -- Extract the file path from the git status output
+        local status = line:sub(1, 2):gsub("%s", "")
         local file_path = line:match("^[ %?MADRCU]+(.+)$")
+        
         if file_path then
-            table.insert(all_files, file_path)
+            local marker = ""
+            if status == "M" then
+                marker = "* "  -- Modified
+            elseif status == "A" then
+                marker = "+ "  -- Added
+            elseif status == "D" then
+                marker = "- "  -- Deleted
+            elseif status == "??" then
+                marker = "+ "  -- Untracked (new file)
+            end
+
+            table.insert(all_files, marker .. file_path)
+            table.insert(status_markers, marker)
         end
     end
 
@@ -51,19 +66,23 @@ M.get_changed_files = function()
             local is_modified = vim.api.nvim_buf_get_option(buf_id, "modified")
             if is_modified then
                 table.insert(unsaved_files, filename)
+                -- Insert an asterisk (*) in front of the filename to mark it as unsaved
+                for i, file in ipairs(all_files) do
+                    if file:find(filename, 1, true) then
+                        all_files[i] = "* " .. file
+                    end
+                end
             end
         end
     end
 
     -- Combine and return both lists
-    all_files = vim.tbl_extend("force", all_files, unsaved_files)
-    
-    return all_files, unsaved_files
+    return all_files, status_markers
 end
 
 -- Function to display changed files in a small window
 M.show_changed_files = function()
-    local files, unsaved_files = M.get_changed_files()
+    local files, status_markers = M.get_changed_files()
 
     if vim.tbl_isempty(files) then
         print("No changes since last commit.")
@@ -101,12 +120,6 @@ M.show_changed_files = function()
     vim.api.nvim_win_set_option(win, "winhighlight", "NormalFloat:GitSignalNormalFloat,FloatBorder:GitSignalFloatBorder")
 
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, truncated_files)
-
-    for i, file in ipairs(truncated_files) do
-        if vim.tbl_contains(unsaved_files, file) then
-            vim.api.nvim_buf_add_highlight(buf, -1, "GitSignalUnsaved", i - 1, 0, -1)
-        end
-    end
 
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
 end
