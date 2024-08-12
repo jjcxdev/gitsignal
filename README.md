@@ -86,5 +86,5 @@ Contributions are welcome! If you have ideas for improvements or have found a bu
 
 ## ⇁ Social
 
-For questions about Git Sign reach out to me on X.
+For questions about GitSignal reach out to me on X.
 * [X](https://x.com/jjcxdev)
