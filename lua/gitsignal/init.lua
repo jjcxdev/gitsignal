@@ -1,31 +1,4 @@
 local M = {}
--- Function to truncate filepath in response
-local function truncate_path(full_path)
-    
-    -- Ensure that full_path is not nil
-    if type(full_path) ~= "string" then return "" end
-
-    -- Get the directory and filename
-    local dir, filename = full_path:match("(.*/)(.*)")
-    
-    -- If dir is nil, just return the full path
-    if not dir then return full_path end
-
-    -- Return the last directory and the filename
-    local last_dir = dir:match(".*/(.*)/")
-    return (last_dir or "") .. "/" .. filename
-end
-
--- Function to apply truncation to all file paths in the list
-local function truncate_paths(files)
-    local truncated_files = {}
-    for _, file in ipairs(files) do
-        table.insert(truncated_files, truncate_path(files))
-    end
-    return truncated_files
-end
-
--- Function to get changed files since the last commit
 M.get_changed_files = function()
     -- Get changed files from git
     local handle = io.popen("git diff --name-only HEAD")
@@ -61,11 +34,9 @@ M.get_changed_files = function()
 
     -- Combine and return both lists
     local all_files = vim.tbl_extend("force", git_files, unsaved_files)
-
-    -- Truncate the paths to show only immediate directory and filename
-    local truncated_files = truncate_paths(all_files)
     
-    return truncated_files  -- Return the truncated file paths
+    -- Directly return the full file paths
+    return all_files
 end
 
 -- Function to display changed files in a small window
@@ -104,7 +75,7 @@ M.show_changed_files = function()
     -- Apply terminal color scheme to avoid black spacing
     vim.api.nvim_win_set_option(win, "winhighlight", "NormalFloat:Normal,FloatBorder:FloatBorder")
 
-    -- Set the buffer content with the truncated file paths
+    -- Set the buffer content with the full file paths
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, files)
 
     -- Optional: make the window closeable with `q`
