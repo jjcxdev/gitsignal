@@ -47,7 +47,7 @@ M.show_unsaved_files = function()
 
     -- Set up highlight groups
     vim.api.nvim_set_hl(0, "GitSignalNormalFloat", { bg = "NONE", fg = "NONE" })
-    vim.api.nvim_set_hl(0, "GitSignalFloatBorder", { bg = "NONE", fg = "NONE" })
+    vim.api.nvim_set_hl(0, "GitSignalFloatBorder", { bg = "NONE", fg = "#9d00ff" }) -- vibrant purple
     vim.api.nvim_set_hl(0, "GitSignalUnsaved", { fg = "#e06c75", bold = true })
 
     -- Create a new floating window
@@ -58,7 +58,7 @@ M.show_unsaved_files = function()
         height = win_height,
         row = row,
         col = col,
-        border = 'single',
+        border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }, -- solid borders
         title = title,
         title_pos = 'center'
     })
