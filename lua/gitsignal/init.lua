@@ -67,12 +67,12 @@ M.get_changed_files = function()
     all_files = vim.tbl_extend("force", all_files, unsaved_files)
     
     -- Directly return the full file paths
-    return all_files
+    return all_files, unsaved_files -- Return both all files and unsaved files
 end
 
 -- Function to display changed files in a small window
 M.show_changed_files = function()
-    local files = M.get_changed_files()
+    local files, unsaved_files = M.get_changed_files()
 
     if vim.tbl_isempty(files) then
         print("No changes since last commit.")
@@ -109,7 +109,14 @@ M.show_changed_files = function()
     -- Set the buffer content with the truncated file paths
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, truncated_files)
 
-    -- Optional: make the window closeable with q
+    -- Highlight unsaved files in red
+    for i, file in ipairs(truncated_files) do
+        if vim.tbl_contains(unsaved_files, file) then
+            vim.api.nvim_buf_add_highlight(buf, -1, "Error", i - 1, 0, -1) -- highlight the line in red
+        end
+    end
+
+    -- Optional: make the window closeable with `q`
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', { noremap = true, silent = true })
 end
 
