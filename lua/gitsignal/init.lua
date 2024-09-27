@@ -28,12 +28,17 @@ end
 
 -- Function to display unsaved files in a small window
 M.show_unsaved_files = function()
+    local unsaved_files = M.get_unsaved_files()
+
+    -- If there are no unsaved files, do not display the window
+    if vim.tbl_isempty(unsaved_files) then
+        return
+    end
+
     -- Close the existing window if it exists
     if M.win and vim.api.nvim_win_is_valid(M.win) then
         vim.api.nvim_win_close(M.win, true)
     end
-
-    local unsaved_files = M.get_unsaved_files()
 
     -- Centered title for the floating window
     local title = " GitSignal "
@@ -70,15 +75,11 @@ M.show_unsaved_files = function()
 
     vim.api.nvim_win_set_option(M.win, "winhighlight", "NormalFloat:GitSignalNormalFloat,FloatBorder:GitSignalFloatBorder")
 
-    if vim.tbl_isempty(truncated_files) then
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "No unsaved files" })
-    else
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, truncated_files)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, truncated_files)
 
-        -- Highlight unsaved files in red
-        for i, _ in ipairs(truncated_files) do
-            vim.api.nvim_buf_add_highlight(buf, -1, "GitSignalUnsaved", i, 0, -1)
-        end
+    -- Highlight unsaved files in red
+    for i, _ in ipairs(truncated_files) do
+        vim.api.nvim_buf_add_highlight(buf, -1, "GitSignalUnsaved", i, 0, -1)
     end
 
     -- Make the window closeable with a command
