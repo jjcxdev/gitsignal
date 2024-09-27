@@ -32,6 +32,7 @@ M.show_unsaved_files = function()
 
     -- If there are no unsaved files, do not display the window
     if vim.tbl_isempty(unsaved_files) then
+        M.close_git_signal() -- Close window if no unsaved files are left
         return
     end
 
